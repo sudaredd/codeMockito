@@ -16,9 +16,13 @@ public class BookService {
     public void addBook(Book book) {
         bookRepository.add(book);
     }
-    
+
     public Collection<Book> findAllBooks() {
         return bookRepository.findAll();
+    }
+
+    public int findNumberOfBooks() {
+        return bookRepository.findAll().size();
     }
 }
 
