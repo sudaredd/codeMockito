@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.exceptions.misusing.PotentialStubbingProblem;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,13 +61,24 @@ public class BookServiceTest {
 
         assertEquals(190.0, actualCost, 0.01);
     }
-    
+
     @Test
     public void testVoidMethod() {
         Book b1 = new Book("b1", "Junit 5 in  Action", 100, LocalDate.now());
 
         doNothing().when(bookRepository).save(b1);
-        
+
         bookService.addBook(b1);
+    }
+
+    @Test
+    public void testVoidMethod_PotentialStubbingException() {
+        Book b1 = new Book("b1", "Junit 5 in  Action", 100, LocalDate.now());
+        Book b2 = new Book("b2", "Junit 5 in  Action", 100, LocalDate.now());
+
+        doNothing().when(bookRepository).save(b1);
+
+        PotentialStubbingProblem potentialStubbingProblem = assertThrows(PotentialStubbingProblem.class, () -> bookService.addBook(b2));
+        System.out.println("excep::" + potentialStubbingProblem.getLocalizedMessage());
     }
 }
